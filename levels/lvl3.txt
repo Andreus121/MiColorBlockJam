@@ -1,0 +1,20 @@
+[META]
+NAME = LSHAPE
+WIDTH = 8
+HEIGHT = 8
+STEP_LIMIT = 50
+[BLOCK]
+1 COLOR=a WIDTH=2 HEIGHT=3 INIT_X=3 INIT_Y=3 GEOMETRY=1 0 1 0 1 1
+[WALL]
+########
+#      #
+#      #
+#      #
+#      #
+#      #
+#      #
+########
+[EXIT]
+COLOR=a X=7 Y=4 ORIENTATION=V LI=3 LF=3 STEP=0
+[GATE]
+ 

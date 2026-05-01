@@ -1,0 +1,20 @@
+[META]
+NAME = COMPUERTA1
+WIDTH = 10
+HEIGHT = 8
+STEP_LIMIT = 100
+[BLOCK]
+1 COLOR=b WIDTH=1 HEIGHT=1 INIT_X=2 INIT_Y=4 GEOMETRY=1
+[WALL]
+##########
+#        #
+#    #   #
+#    #   #
+#    #   #
+#    #   #
+#        #
+##########
+[EXIT]
+COLOR=b X=9 Y=4 ORIENTATION=V LI=1 LF=1 STEP=0
+[GATE]
+X=5 Y=4 CI=a CF=c STEP=2
