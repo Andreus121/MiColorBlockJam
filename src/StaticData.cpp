@@ -2,8 +2,8 @@
 
 StaticData::StaticData(){
     //datos del tablero
-    this->anchoTablero = 0;
-    this->altoTablero = 0;
+    this->widthBoardboard = 0;
+    this->heigthTablero = 0;
     this->paredesTablero = nullptr;
 
     //datos de cada bloque

@@ -1,41 +1,44 @@
 #pragma once
 #include <cstdint>
 
+//Holds only the STATIC data of the rest of pieces
 class StaticData{
     public:
-    //datos del tablero
-    int anchoTablero;
-    int altoTablero;
-    char** paredesTablero;
-    int limiteMovimientos;
+    //board's data
+    uint8_t boardWith; //ancho
+    uint8_t BoardHeight; //largo
+    char** boardWalls;
+    uint16_t stepLimit;
 
-    //datos de cada bloque
-    //el id de cada bloque será el mismo que el indice de su respectivo dato
-    int cantidadBloques;
-    char* coloresBloques;
-    int* altoBloques;
-    int* anchoBloques;
-    uint8_t** geometriaBloques;
+    //block's data
+    uint8_t blockCount;
+    char* blockColors;
+    uint8_t* blockWidth;
+    uint8_t* blockHeight;
+    uint8_t** blockGeometrics;
 
-    //datos de las salidas
-    //el id de cada salida será el mismo que el indice de su respectivo dato
-    int cantidadSalidas;
-    int* xSalidas;
-    int* ySalidas;
-    char* coloresSalidas;
-    char* orientacionSalidas;
-    int* largoISalidas;
-    int* largoFSalidas;
-    int* pasosSalidas;
+    //exit's data
+    uint8_t exitCount;
+    int8_t* exitX;
+    int8_t* exitY;
+    char* exitColors;
+    char* exitOrientations; //V or H (vertical or horizontal)
+    uint8_t* exitInitialLenghts; 
+    uint8_t* exitFinalLenghts;
+    uint8_t* exitSteps;
 
-    //datos de las compuertas
-    //el id de cada compuerta será el mismo que el indice de su respectivo dato
-    int cantidadCompuertas;
-    int* xCompuertas;
-    int* yCompuertas;
-    char* colorICompuertas;
-    char* colorFCompuertas;
-    int* pasosCompuertas;
+    //gate's data
+    uint8_t gateCount;
+    int8_t* gateX;
+    int8_t* gateY;
+    uint8_t* gateColorSequenceLengths;
+    char* gateColorSequences;
+    uint8_t* gateSteps;
+    /*
+    uint8_t = 0 -> 255
+    uint16_t = 0 -> 65535
+    int8_t = -128 -> 127
+    */
 
     //constructor
     StaticData();
