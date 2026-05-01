@@ -1,7 +1,7 @@
 #include "Block.h"
 //Holds the dynamic data of a block. (position, id)
-//
-Bloque::Bloque(int8_t id, 
+//Static data lives in StaticData
+Block::Block(int8_t id, 
         int x,
         int y,
         StaticData* staticData){
@@ -11,18 +11,18 @@ Bloque::Bloque(int8_t id,
     this->staticData = staticData;
 };
 
-void Bloque::moverArriba(){
+void Block::moveU(){
     this->y -= 1;
 }
 
-void Bloque::moverAbajo(){
+void Block::moveD(){
     this->y += 1;
 }
 
-void Bloque::moverIzquierda(){
+void Block::moveL(){
     this->x -= 1;
 }
 
-void Bloque::moverDerecha(){
+void Block::moveR(){
     this->x += 1;
 }
