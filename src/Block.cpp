@@ -1,9 +1,8 @@
 #include "Block.h"
-//Holds the dynamic data of a block. (position, id)
-//Static data lives in StaticData
-Block::Block(int8_t id, 
-        int x,
-        int y,
+
+Block::Block(uint8_t id, 
+        int8_t x,
+        int8_t y,
         StaticData* staticData){
     this->id = id;
     this->x = x;

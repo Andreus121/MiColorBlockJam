@@ -1,23 +1,23 @@
 #pragma once
 #include "StaticData.h"
+#include <cstdint>
 
-/*
-Clase pieza para realizar el juego de color block jam
-*/
+//Holds the dynamic data of a block. (position, id)
+//Static data lives in StaticData
 class Block{
     public:
-    //atributos
-    int8_t id;
-    int x;
-    int y;
+    uint8_t id;
+    int8_t x;
+    int8_t y;
     StaticData* staticData;
 
-    // constructor
-    Block(int8_t id, 
-        int x,
-        int y,
+    //constructor
+    Block(uint8_t id, 
+        int8_t x,
+        int8_t y,
         StaticData* staticData);
     
+    //move
     void moveU();
     void moveD();
     void moveL();
