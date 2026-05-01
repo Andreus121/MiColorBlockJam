@@ -1,33 +1,34 @@
 #include "StaticData.h"
 
 StaticData::StaticData(){
-    //datos del tablero
-    this->widthBoardboard = 0;
-    this->heigthTablero = 0;
-    this->paredesTablero = nullptr;
+    //board's data
+    this->boardWith = 0;
+    this->boardHeight = 0;
+    this->boardWalls = nullptr;
+    this->stepLimit = 0;
 
-    //datos de cada bloque
-    this->cantidadBloques = 0;
-    this->coloresBloques = nullptr;
-    this->altoBloques = nullptr;
-    this->anchoBloques = nullptr;
-    this->geometriaBloques = nullptr;
+    //block's data
+    this->blockCount = 0;
+    this->blockColors = nullptr;
+    this->blockWidth = nullptr;
+    this->blockHeight = nullptr;
+    this->blockGeometrics = nullptr;
 
     //datos de las salidas
-    this->cantidadSalidas = 0;
-    this->xSalidas = nullptr;
-    this->ySalidas = nullptr;
-    this->coloresSalidas = nullptr;
-    this->orientacionSalidas = nullptr;
-    this->largoISalidas = nullptr;
-    this->largoFSalidas = nullptr;
-    this->pasosSalidas = nullptr;
+    this->exitCount = 0;
+    this->exitX = nullptr;
+    this->exitY = nullptr;
+    this->exitColors = nullptr;
+    this->exitOrientations = nullptr;
+    this->exitInitialLenghts = nullptr;
+    this->exitFinalLenghts = nullptr;
+    this->exitSteps = nullptr;
 
     //datos de las compuertas
-    this->cantidadCompuertas = 0;
-    this->xCompuertas = nullptr;
-    this->yCompuertas = nullptr;
-    this->colorICompuertas = nullptr;
-    this->colorFCompuertas = nullptr;
-    this->pasosCompuertas = nullptr;
+    this->gateCount = 0;
+    this->gateX = nullptr;
+    this->gateY = nullptr;
+    this->gateColorSequenceLengths = nullptr;
+    this->gateColorSequences = nullptr;
+    this->gateSteps = nullptr;
 }
