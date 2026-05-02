@@ -32,7 +32,7 @@ class StaticData{
     int8_t* gateX;
     int8_t* gateY;
     uint8_t* gateColorSequenceLengths;
-    char* gateColorSequences;
+    char** gateColorSequences;//array of arrays
     uint8_t* gateSteps;
     /*
     uint8_t = 0 -> 255
