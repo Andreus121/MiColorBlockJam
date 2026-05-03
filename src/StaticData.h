@@ -5,35 +5,35 @@
 class StaticData{
     public:
     //board's data
-    uint8_t boardWidth; //ancho
-    uint8_t boardHeight; //largo
+    int8_t boardWidth; //ancho
+    int8_t boardHeight; //largo
     char** boardWalls;
     uint16_t stepLimit;
 
     //block's data
-    uint8_t blockCount;
+    int8_t blockCount;
     char* blockColors;
-    uint8_t* blockWidth;
-    uint8_t* blockHeight;
+    int8_t* blockWidth;
+    int8_t* blockHeight;
     uint8_t** blockGeometrics;
 
     //exit's data
-    uint8_t exitCount;
+    int8_t exitCount;
     int8_t* exitX;
     int8_t* exitY;
     char* exitColors;
     char* exitOrientations; //V or H (vertical or horizontal)
-    uint8_t* exitInitialLenghts; 
-    uint8_t* exitFinalLenghts;
-    uint8_t* exitSteps;
+    int8_t* exitInitialLenghts; 
+    int8_t* exitFinalLenghts;
+    int8_t* exitSteps;
 
     //gate's data
-    uint8_t gateCount;
+    int8_t gateCount;
     int8_t* gateX;
     int8_t* gateY;
-    uint8_t* gateColorSequenceLengths;
+    int8_t* gateColorSequenceLengths;
     char** gateColorSequences;//array of arrays
-    uint8_t* gateSteps;
+    int8_t* gateSteps;
     /*
     uint8_t = 0 -> 255
     uint16_t = 0 -> 65535

@@ -1,8 +1,8 @@
 #include <string>
 #include "Gate.h"
 
-Gate::Gate(uint8_t id,
-        uint8_t actualColor,
+Gate::Gate(int8_t id,
+        int8_t actualColor,
         StaticData* staticData){
     this->id=id;
     this->actualColor=actualColor;
@@ -12,9 +12,9 @@ Gate::Gate(uint8_t id,
 
 //change te color based in the stepsCount and stepsLimit
 void Gate::updateGate(){
-    uint8_t colorSequencesLen = staticData->gateColorSequenceLengths[id];
+    int8_t colorSequencesLen = staticData->gateColorSequenceLengths[id];
     char* colorSequences = staticData->gateColorSequences[id];
-    uint8_t stepsLimit = staticData->gateSteps[id];
+    int8_t stepsLimit = staticData->gateSteps[id];
 
     //if the color its static, dont change anything
     if (stepsLimit=0) return;

@@ -1,8 +1,8 @@
 #include <string>
 #include "Exit.h"
 
-Exit::Exit(uint8_t id,
-        uint8_t actualLen,
+Exit::Exit(int8_t id,
+        int8_t actualLen,
         StaticData* staticData){
     this->id = id;
     this->actualLen = actualLen;
@@ -16,9 +16,9 @@ Exit::Exit(uint8_t id,
 //initialLen, finalLen, limitSteps
 void Exit::updateData(){
 
-    uint8_t initialLen = staticData->exitInitialLenghts[id];
-    uint8_t finalLen = staticData->exitFinalLenghts[id];
-    uint8_t stepsLimit = staticData->exitSteps[id];
+    int8_t initialLen = staticData->exitInitialLenghts[id];
+    int8_t finalLen = staticData->exitFinalLenghts[id];
+    int8_t stepsLimit = staticData->exitSteps[id];
 
     // if the len its static dont change anything
     if(stepsLimit == 0) return;

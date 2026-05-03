@@ -6,13 +6,13 @@
 //Static data lives in StaticData
 class Block{
     public:
-    uint8_t id;
+    int8_t id;
     int8_t x;
     int8_t y;
     StaticData* staticData;
 
     //constructor
-    Block(uint8_t id, 
+    Block(int8_t id, 
         int8_t x,
         int8_t y,
         StaticData* staticData);

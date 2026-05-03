@@ -5,13 +5,13 @@
 //Holds the dynamic data of the Gate (id, actualColor, stepsCount)
 class Gate{
     public:
-    uint8_t id;
-    uint8_t actualColor;//index of the color staticData->gateColorSequences
-    uint8_t stepsCount;
+    int8_t id;
+    int8_t actualColor;//index of the color staticData->gateColorSequences
+    int8_t stepsCount;
     StaticData* staticData;
 
-    Gate(uint8_t id,
-        uint8_t actualColor,
+    Gate(int8_t id,
+        int8_t actualColor,
         StaticData* staticData);
     
     //change the stepsCount, and change actualColor if stepsCount=stepsLimit

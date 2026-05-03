@@ -1,6 +1,6 @@
 #include "Block.h"
 
-Block::Block(uint8_t id, 
+Block::Block(int8_t id, 
         int8_t x,
         int8_t y,
         StaticData* staticData){
