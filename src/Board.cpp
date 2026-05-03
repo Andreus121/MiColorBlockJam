@@ -1,16 +1,16 @@
 #include <iostream>
 #include "Board.h"
 
-Board::Board(StaticData* staticData,
-        Block** blocks,
-        Exit** exits,
-        Gate** gates){
+Board::Board(StaticData* staticData, Block** blocks,
+        Exit** exits, Gate** gates, 
+        uint8_t movesCount, int8_t blocksCount){
     //save dynamic data
     this->staticData = staticData;
+    this->blocksCount = blocksCount;//default = 0
     this->blocks = blocks;
     this->exits = exits;
     this->gates = gates;
-    this->movesCount = 0;
+    this->movesCount = movesCount;//default = 0
     
     //save memory and build the grid
     rebuildGrid();
@@ -19,8 +19,8 @@ Board::Board(StaticData* staticData,
 Board::~Board(){
     //free memory if the grid exist
     if(grid != nullptr){
-        uint8_t height = staticData->boardHeight;
-        for(uint8_t i = 0; i < height; i++){
+        int8_t height = staticData->boardHeight;
+        for(int8_t i = 0; i < height; i++){
             delete[] grid[i];
         }
         delete[] grid;
@@ -28,19 +28,19 @@ Board::~Board(){
     }
 
     //free blocks
-    for(uint8_t i = 0; i < blocksCount; i++){
+    for(int8_t i = 0; i < blocksCount; i++){
         delete blocks[i];
     }
     delete[] blocks;
 
     //free exits
-    for(uint8_t i = 0; i < staticData->exitCount; i++){
+    for(int8_t i = 0; i < staticData->exitCount; i++){
         delete exits[i];
     }
     delete[] exits;
 
     //free gates
-    for(uint8_t i = 0; i < staticData->gateCount; i++){
+    for(int8_t i = 0; i < staticData->gateCount; i++){
         delete gates[i];
     }
     delete[] gates;
@@ -50,83 +50,82 @@ Board::~Board(){
 
 //rebuild the Grid with all of his characters
 void Board::rebuildGrid(){
-    int height = staticData->boardHeight;
-    int width = staticData->boardWidth;
+    int8_t height = staticData->boardHeight;
+    int8_t width = staticData->boardWidth;
 
     //reserve memory for the grid
     if(grid == nullptr){
         grid = new char*[height];
-        for(int i = 0; i < height; i++){
+        for(int8_t i = 0; i < height; i++){
             grid[i] = new char[width];
         }
     }
 
     //copy the walls "#" in the grid
-    for(int i = 0; i < height; i++){
-        for(int j = 0; j < width; j++){
+    for(int8_t i = 0; i < height; i++){
+        for(int8_t j = 0; j < width; j++){
             grid[i][j] = staticData->boardWalls[i][j];
         }
     }
 
     //pint exits with his orientatios V or H
-    for(int s = 0; s < staticData->exitCount; s++){
+    for(int8_t s = 0; s < staticData->exitCount; s++){
         //hold data of the exit
         Exit* exit = exits[s];
-        int x0 = staticData->exitX[s];
-        int y0 = staticData->exitY[s];
+        int8_t x0 = staticData->exitX[s];
+        int8_t y0 = staticData->exitY[s];
         char color = staticData->exitColors[s];
         char orientation = staticData->exitOrientations[s];
-        int actualLen = exit->actualLen;
+        int8_t actualLen = exit->actualLen;
 
-        
-        for(int k = 0; k < actualLen; k++){
-            int fila, col;
+        for(int8_t k = 0; k < actualLen; k++){
+            int8_t row, column;
+            //pint Horizontal exit
             if(orientation == 'H'){
-                fila = y0;
-                col = x0 + k;
-            } else {
-                fila = y0 + k;
-                col = x0;
+                row = y0;
+                column = x0 + k;
             }
-            //seguridad solo pintar dentro del tablero
-            if(fila >= 0 && fila < height && col >= 0 && col < width){
-                this->grid[fila][col] = color;
+            //pint Vertical exit
+            else{
+                row = y0 + k;
+                column = x0;
+            }
+            //only pint in the board
+            if(row >= 0 && row < height && column >= 0 && column < width){
+                grid[row][column] = color;
             }
         }
     }
 
-    //pintar gates con su color actual
-    for(int c = 0; c < this->staticData->gateCount; c++){
-        int xc = this->staticData->xCompuertas[c];
-        int yc = this->staticData->yCompuertas[c];
-        this->grid[yc][xc] = this->gates[c]->coloractual;
+    //pint gates
+    for(int8_t c = 0; c < staticData->gateCount; c++){
+        int8_t xc = staticData->gateX[c];
+        int8_t yc = staticData->gateY[c];
+        grid[yc][xc] = gates[c]->actualColor;
     }
 
-    //pintar blocks según su geometría
-    //geometriaBloques[idBloque] es un arreglo plano de width*height booleanos
-    //fila i, col j del bloque => index = i*anchoBloque + j
-    for(int b = 0; b < this->blocksCount; b++){
-        Block* bloque = this->blocks[b];
-        int id = bloque->id;
-        int anchoB = this->staticData->anchoBloques[id];
-        int altoB = this->staticData->altoBloques[id];
-        char colorB = this->staticData->coloresBloques[id];
-        uint8_t* geom = this->staticData->geometriaBloques[id];
+    //pint blocks with his geometric, geometric is an array []
+    for(int8_t b = 0; b < blocksCount; b++){
+        Block* bloque = blocks[b];
+        int8_t id = bloque->id;
+        int8_t blockWidth = staticData->blockWidth[id];
+        int8_t blockHeight = staticData->blockHeight[id];
+        char blockColor = staticData->blockColors[id];
+        int8_t* blockGeometric = staticData->blockGeometrics[id];
 
-        for(int i = 0; i < altoB; i++){
-            for(int j = 0; j < anchoB; j++){
-                if(geom[i * anchoB + j] == 1){
-                    int fila = bloque->y + i;
-                    int col = bloque->x + j;
-                    this->grid[fila][col] = colorB;
+        for(int8_t i = 0; i < blockHeight; i++){
+            for(int8_t j = 0; j < blockWidth; j++){
+                if(blockGeometric[i * blockWidth + j] == 1){
+                    int8_t row = bloque->y + i;
+                    int8_t column = bloque->x + j;
+                    grid[row][column] = blockColor;
                 }
             }
         }
     }
 }
 
-//muestra el tablero en pantalla
-void Board::imprimir(){
+void Board::printGrid(){
     int height = this->staticData->boardHeight;
     int width = this->staticData->boardWidth;
     for(int i = 0; i < height; i++){
@@ -137,113 +136,108 @@ void Board::imprimir(){
     }
 }
 
-//los metodos usados para movimientos y A*
-
-//comprobar si el juego termino
-bool Board::esSolucion(){
-    return this->blocksCount == 0;
+bool Board::isSolved(){
+    return blocksCount == 0;
 }
 
-//clonar el tablero actual
-Board* Board::clonar(){
-    //copiar blocks vivos
-    Block** nuevosBloques = new Block*[this->blocksCount];
-    for(int i = 0; i < this->blocksCount; i++){
-        Block* orig = this->blocks[i];//crea el arreglo
-        nuevosBloques[i] = new Block(orig->id, orig->x, orig->y, this->staticData);//agrega cada bloque
+//clone all data of the Table except the grid
+Board* Board::clone(){
+    //copy blocks
+    Block** newBlocks = new Block*[blocksCount];
+    for(int i = 0; i < blocksCount; i++){
+        Block* original = blocks[i];//crea el arreglo
+        newBlocks[i] = new Block(original->id, original->x, original->y, staticData);
     }
 
-    //copiar exits (todas, aunque no haya blocks adentro siguen existiendo)
-    int numSalidas = this->staticData->exitCount;
-    Exit** nuevasSalidas = new Exit*[numSalidas];
-    for(int i = 0; i < numSalidas; i++){
-        Exit* orig = this->exits[i];
-        Exit* copia = new Exit(orig->id, orig->la, this->staticData);
-        copia->contadorpasos = orig->contadorpasos;
-        copia->direccion = orig->direccion;
-        nuevasSalidas[i] = copia;
+    //copy exits
+    int exitCount = staticData->exitCount;
+    Exit** newExits = new Exit*[exitCount];
+    for(int i = 0; i < exitCount; i++){
+        Exit* original = exits[i];
+        Exit* copy = new Exit(original->id, original->actualLen, this->staticData);
+        copy->stepsCount = original->stepsCount;
+        copy->direction = original->direction;
+        newExits[i] = copy;
     }
 
-    //copiar gates
-    int numCompuertas = this->staticData->gateCount;
-    Gate** nuevasCompuertas = new Gate*[numCompuertas];
-    for(int i = 0; i < numCompuertas; i++){
-        Gate* orig = this->gates[i];
-        Gate* copia = new Gate(orig->id, orig->coloractual, this->staticData);
-        copia->contadorpasos = orig->contadorpasos;
-        nuevasCompuertas[i] = copia;
+    //copy gates
+    int gateCount = staticData->gateCount;
+    Gate** nuevasCompuertas = new Gate*[gateCount];
+    for(int i = 0; i < gateCount; i++){
+        Gate* original = this->gates[i];
+        Gate* copy = new Gate(original->id, original->actualColor, staticData);
+        copy->stepsCount = original->stepsCount;
+        nuevasCompuertas[i] = copy;
     }
 
-    //crear nuevo tablero con this como padre
-    Board* clon = new Board(
-        this->staticData,
-        this->blocksCount,
-        nuevosBloques,
-        nuevasSalidas,
+    //create the new board
+    Board* clon = new Board(staticData,
+        newBlocks,
+        newExits,
         nuevasCompuertas,
-        this->movesCount,
-        this);
+        movesCount,
+        blocksCount);
     return clon;
 }
 
-//retorna el indice del bloque con ese id o -1 si no existe
-int Board::buscarBloque(uint8_t idBloque){
-    for(int i = 0; i < this->blocksCount; i++){
-        if((uint8_t)this->blocks[i]->id == idBloque){
+//return the id of the block or -1 if the block dont exist in the board
+int8_t Board::findBlock(int8_t idBloque){
+    for(int8_t i = 0; i < blocksCount; i++){
+        if((int8_t)blocks[i]->id == idBloque){
             return i;
         }
     }
     return -1;
 }
 
-bool Board::comprobarMovimiento(uint8_t idBloque, char direccion){
-    //buscar el indice del bloque
-    int idx = buscarBloque(idBloque);
-    //si no existe no se valida el movimiento
-    if(idx == -1) return false;
+bool Board::canMove(int8_t blockID, char direction){
+    //find the index of the block
+    int index = findBlock(blockID);
+    //if dont exist, dont can move
+    if(index == -1) return false;
 
     //obtener el puntero al bloque
-    Block* bloque = this->blocks[idx];
+    Block* bloque = this->blocks[index];
     int id = bloque->id;
-    int anchoB = this->staticData->anchoBloques[id];
-    int altoB = this->staticData->altoBloques[id];
-    uint8_t* geom = this->staticData->geometriaBloques[id];
+    int blockWidth = this->staticData->blockWidth[id];
+    int blockHeight = this->staticData->blockHeight[id];
+    int8_t* blockGeometric = this->staticData->blockGeometrics[id];
 
-    //desplazar 1 celda en la dirección dada
+    //desplazar 1 celda en actualLen dirección dada
     int dx = 0, dy = 0;
-    if(direccion == 'U') dy = -1;
-    else if(direccion == 'D') dy = 1;
-    else if(direccion == 'L') dx = -1;
-    else if(direccion == 'R') dx = 1;
+    if(direction == 'U') dy = -1;
+    else if(direction == 'D') dy = 1;
+    else if(direction == 'L') dx = -1;
+    else if(direction == 'R') dx = 1;
     else return false;
 
     //posición destino del bloque
     int nuevoX = bloque->x + dx;
     int nuevoY = bloque->y + dy;
 
-    //recorrer cada celda ocupada por la geometría en la NUEVA posición
-    for(int i = 0; i < altoB; i++){
-        for(int j = 0; j < anchoB; j++){
-            if(geom[i * anchoB + j] != 1){
-                continue; // si la geometria no ocupa la celda, no chequeamos colisiones ahí
+    //recorrer cada celda ocupada por actualLen geometría en actualLen NUEVA posición
+    for(int i = 0; i < blockHeight; i++){
+        for(int j = 0; j < blockWidth; j++){
+            if(blockGeometric[i * blockWidth + j] != 1){
+                continue; // si actualLen geometria no ocupa actualLen celda, no chequeamos colisiones ahí
             }
-            //calcular las coordenadas absolutas de la celda a validar
-            int fila = nuevoY + i;
-            int col = nuevoX + j;
+            //calcular las coordenadas absolutas de actualLen celda a validar
+            int row = nuevoY + i;
+            int column = nuevoX + j;
 
-            char contenido = this->grid[fila][col];
+            char contenido = this->grid[row][column];
             if(contenido == ' '){
                 continue; // vacío, ok
             }
 
-            //la celda tiene algo, verificar si es parte del mismo bloque en su pos actual
-            int localI = fila - bloque->y;//indice dentro de geometria
-            int localJ = col - bloque->x;//indice dentro de geometria
+            //actualLen celda tiene algo, verificar si es parte del mismo bloque en su pos actual
+            int localI = row - bloque->y;//indice dentro de geometria
+            int localJ = column - bloque->x;//indice dentro de geometria
             bool esMismoBloque = false;
             //comprobar limites de geometria
-            if(localI >= 0 && localI < altoB && localJ >= 0 && localJ < anchoB){
-                //verificar si es de la misma geometria
-                if(geom[localI * anchoB + localJ] == 1){ 
+            if(localI >= 0 && localI < blockHeight && localJ >= 0 && localJ < blockWidth){
+                //verificar si es de actualLen misma geometria
+                if(blockGeometric[localI * blockWidth + localJ] == 1){ 
                     esMismoBloque = true;
                 }
             }
@@ -256,73 +250,73 @@ bool Board::comprobarMovimiento(uint8_t idBloque, char direccion){
 }
 
 
-bool Board::intentarSalida(uint8_t idBloque){
+bool Board::intentarSalida(int8_t idBloque){
     //buscar el indice del bloque
-    int idx = buscarBloque(idBloque);
+    int index = buscarBloque(idBloque);
     //si no existe no se puede salir
-    if(idx == -1) return false;
+    if(index == -1) return false;
 
     //guardar los datos del bloque
-    Block* bloque = this->blocks[idx];
+    Block* bloque = this->blocks[index];
     int id = bloque->id;
-    int anchoB = this->staticData->anchoBloques[id];
-    int altoB = this->staticData->altoBloques[id];
-    char colorB = this->staticData->coloresBloques[id];
+    int blockWidth = this->staticData->blockWidth[id];
+    int blockHeight = this->staticData->blockHeight[id];
+    char blockColor = this->staticData->blockColors[id];
 
     //ver todas las exits
     for(int s = 0; s < this->staticData->exitCount; s++){
         //color debe coincidir
-        if(this->staticData->exitColors[s] != colorB) continue;
+        if(this->staticData->exitColors[s] != blockColor) continue;
 
-        //guardar datos de la salida
+        //guardar datos de actualLen salida
         int xs = staticData->exitX[s];
         int ys = staticData->exitY[s];
         char orientation = staticData->exitOrientations[s];
-        int actualLen = exits[s]->la;
+        int actualLen = exits[s]->actualLen;
 
         //casos segun orientacion y lado del tablero
-        //salida vertical (V) en la pared derecha o izquierda
+        //salida vertical (V) en actualLen pared derecha o izquierda
         if(orientation == 'V'){
-            //la salida ocupa filas desde ys hasta ys+actualLen-1, en columna xs
-            //bloque a la derecha saliendo: borde derecho del bloque adyacente a xs
-            //bloque a la izquierda saliendo: borde izquierdo del bloque adyacente a xs
-            bool adyDerecha = (bloque->x + anchoB == xs);
+            //actualLen salida ocupa filas desde ys hasta ys+actualLen-1, en columna xs
+            //bloque a actualLen derecha saliendo: borde derecho del bloque adyacente a xs
+            //bloque a actualLen izquierda saliendo: borde izquierdo del bloque adyacente a xs
+            bool adyDerecha = (bloque->x + blockWidth == xs);
             bool adyIzquierda = (bloque->x - 1 == xs);
             if(!adyDerecha && !adyIzquierda){
                 continue;
             }
             //el height del bloque debe ser <= actualLen
-            if(altoB > actualLen) {
+            if(blockHeight > actualLen) {
                 continue;
             }
-            //las filas del bloque (y..y+altoB-1) deben estar DENTRO del rango de la salida
+            //las filas del bloque (y..y+blockHeight-1) deben estar DENTRO del rango de actualLen salida
             if(bloque->y < ys){
                 continue;
             }
-            if(bloque->y + altoB > ys + actualLen){
+            if(bloque->y + blockHeight > ys + actualLen){
                 continue;
             }
 
             //todo ok: el bloque sale
             //eliminar el bloque del arreglo
-            delete this->blocks[idx];
-            for(int k = idx; k < this->blocksCount - 1; k++){
+            delete this->blocks[index];
+            for(int k = index; k < this->blocksCount - 1; k++){
                 this->blocks[k] = this->blocks[k + 1];
             }
             this->blocksCount--;
             return true;
         }
-        //salida horizontal (H) en la pared arriba o abajo
+        //salida horizontal (H) en actualLen pared arriba o abajo
         else {
-            //la salida ocupa columnas xs..xs+actualLen-1, en fila ys
-            bool adyAbajo = (bloque->y + altoB == ys);
+            //actualLen salida ocupa columnas xs..xs+actualLen-1, en row ys
+            bool adyAbajo = (bloque->y + blockHeight == ys);
             bool adyArriba = (bloque->y - 1 == ys);
             if(!adyAbajo && !adyArriba){
                 continue;
             }
 
             //si el bloque no cabe, sigue
-            if(anchoB > actualLen) {
+            if(blockWidth > actualLen) {
                 continue;
             }
 
@@ -330,14 +324,14 @@ bool Board::intentarSalida(uint8_t idBloque){
             if(bloque->x < xs) {
                 continue;
             }
-            if(bloque->x + anchoB > xs + actualLen) {
+            if(bloque->x + blockWidth > xs + actualLen) {
                 continue;
             }
 
             //todo ok: el bloque sale
             //eliminar el bloque del arreglo
-            delete this->blocks[idx];
-            for(int k = idx; k < this->blocksCount - 1; k++){
+            delete this->blocks[index];
+            for(int k = index; k < this->blocksCount - 1; k++){
                 this->blocks[k] = this->blocks[k + 1];
             }
             this->blocksCount--;
@@ -347,19 +341,19 @@ bool Board::intentarSalida(uint8_t idBloque){
     return false;
 }
 
-bool Board::intentarCompuerta(uint8_t idBloque){
+bool Board::intentarCompuerta(int8_t idBloque){
     //obtener el indice del bloque en el arreglo
-    int idx = buscarBloque(idBloque);
+    int index = buscarBloque(idBloque);
     //si el bloque no existe, no puede cruzar compuerta
-    if(idx == -1) return false;
+    if(index == -1) return false;
 
     //guardar los datos del bloque
-    Block* bloque = this->blocks[idx];
+    Block* bloque = this->blocks[index];
     int id = bloque->id;
-    int anchoB = this->staticData->anchoBloques[id];
-    int altoB = this->staticData->altoBloques[id];
-    char colorB = this->staticData->coloresBloques[id];
-    uint8_t* geom = this->staticData->geometriaBloques[id];
+    int blockWidth = this->staticData->blockWidth[id];
+    int blockHeight = this->staticData->blockHeight[id];
+    char blockColor = this->staticData->blockColors[id];
+    int8_t* blockGeometric = this->staticData->blockGeometrics[id];
 
     //guardar datos del tablero
     int height = this->staticData->boardHeight;
@@ -367,62 +361,62 @@ bool Board::intentarCompuerta(uint8_t idBloque){
 
     //comprobar cada compuerta
     for(int c = 0; c < this->staticData->gateCount; c++){
-        //color de la compuerta debe coincidir con el bloque
-        if(this->gates[c]->coloractual != colorB){ 
+        //color de actualLen compuerta debe coincidir con el bloque
+        if(this->gates[c]->actualColor != blockColor){ 
             continue;
         }
-        //guardar coordenadas de la compuerta
-        int xc = this->staticData->xCompuertas[c];
-        int yc = this->staticData->yCompuertas[c];
+        //guardar coordenadas de actualLen compuerta
+        int xc = this->staticData->gateX[c];
+        int yc = this->staticData->gateY[c];
 
-        //chequear si el bloque está adyacente a la compuerta
+        //chequear si el bloque está adyacente a actualLen compuerta
         //y calcular el desplazamiento del teletransporte
         int dx = 0, dy = 0;
         bool adyacente = false;
 
-        //compuerta a la derecha del bloque
-        if(bloque->x + anchoB == xc && bloque->y <= yc && yc < bloque->y + altoB){
-            dx = anchoB + 1; adyacente = true;
+        //compuerta a actualLen derecha del bloque
+        if(bloque->x + blockWidth == xc && bloque->y <= yc && yc < bloque->y + blockHeight){
+            dx = blockWidth + 1; adyacente = true;
         }
-        //compuerta a la izquierda
-        else if(bloque->x - 1 == xc && bloque->y <= yc && yc < bloque->y + altoB){
-            dx = -(anchoB + 1); adyacente = true;
+        //compuerta a actualLen izquierda
+        else if(bloque->x - 1 == xc && bloque->y <= yc && yc < bloque->y + blockHeight){
+            dx = -(blockWidth + 1); adyacente = true;
         }
         //compuerta abajo
-        else if(bloque->y + altoB == yc && bloque->x <= xc && xc < bloque->x + anchoB){
-            dy = altoB + 1; adyacente = true;
+        else if(bloque->y + blockHeight == yc && bloque->x <= xc && xc < bloque->x + blockWidth){
+            dy = blockHeight + 1; adyacente = true;
         }
         //compuerta arriba
-        else if(bloque->y - 1 == yc && bloque->x <= xc && xc < bloque->x + anchoB){
-            dy = -(altoB + 1); adyacente = true;
+        else if(bloque->y - 1 == yc && bloque->x <= xc && xc < bloque->x + blockWidth){
+            dy = -(blockHeight + 1); adyacente = true;
         }
 
-        //si no está adyacente, seguir con la siguiente compuerta
+        //si no está adyacente, seguir con actualLen siguiente compuerta
         if(!adyacente){ 
             continue;
         }
 
-        //chequear que en la nueva posición haya espacio para el bloque completo
+        //chequear que en actualLen nueva posición haya espacio para el bloque completo
         int nuevoX = bloque->x + dx;
         int nuevoY = bloque->y + dy;
 
-        //verificar si hay espacio del otro lado de la compuerta
+        //verificar si hay espacio del otro lado de actualLen compuerta
         bool hayEspacio = true;
-        for(int i = 0; i < altoB && hayEspacio; i++){
-            for(int j = 0; j < anchoB && hayEspacio; j++){
-                //si la geometria del bloque no usa ese espacio, pasa de largo
-                if(geom[i * anchoB + j] != 1){ 
+        for(int i = 0; i < blockHeight && hayEspacio; i++){
+            for(int j = 0; j < blockWidth && hayEspacio; j++){
+                //si actualLen geometria del bloque no usa ese espacio, pasa de largo
+                if(blockGeometric[i * blockWidth + j] != 1){ 
                     continue;
                 }
-                //calcular la fila y columna de la nueva coordenada
-                int fila = nuevoY + i;
-                int col = nuevoX + j;
-                //comprobar que la celda esté dentro del tablero
-                if(fila < 0 || fila >= height || col < 0 || col >= width){
+                //calcular actualLen row y columna de actualLen nueva coordenada
+                int row = nuevoY + i;
+                int column = nuevoX + j;
+                //comprobar que actualLen celda esté dentro del tablero
+                if(row < 0 || row >= height || column < 0 || column >= width){
                     hayEspacio = false; break;
                 }
-                //comprobar que la celda esté vacía
-                if(this->grid[fila][col] != ' '){
+                //comprobar que actualLen celda esté vacía
+                if(this->grid[row][column] != ' '){
                     hayEspacio = false;
                 }
             }
@@ -441,21 +435,21 @@ bool Board::intentarCompuerta(uint8_t idBloque){
     return false;//no pudo pasar el bloque
 }
 
-bool Board::moverBloque(uint8_t idBloque, char direccion){
+bool Board::moverBloque(int8_t idBloque, char direction){
     //verifica si se puede hacer el movimiento
-    if(!comprobarMovimiento(idBloque, direccion)){
+    if(!comprobarMovimiento(idBloque, direction)){
          return false;
     }
     //buscar el indice del bloque a mover
-    int idx = buscarBloque(idBloque);
+    int index = buscarBloque(idBloque);
     //guardar el puntero del bloque a mover
-    Block* bloque = this->blocks[idx];
+    Block* bloque = this->blocks[index];
 
     //aplicar el desplazamiento de 1 celda
-    if(direccion == 'U') bloque->y -= 1;
-    else if(direccion == 'D') bloque->y += 1;
-    else if(direccion == 'L') bloque->x -= 1;
-    else if(direccion == 'R') bloque->x += 1;
+    if(direction == 'U') bloque->y -= 1;
+    else if(direction == 'D') bloque->y += 1;
+    else if(direction == 'L') bloque->x -= 1;
+    else if(direction == 'R') bloque->x += 1;
 
     
     //actualizar gates y exits según su contador de pasos
@@ -475,9 +469,9 @@ bool Board::moverBloque(uint8_t idBloque, char direccion){
     this->movesCount += 1;
 
     //registrar el movimiento
-    this->movimientoOrigen = Movimiento(idBloque, direccion, 1);
+    this->movimientoOrigen = Movimiento(idBloque, direction, 1);
     
-    //reconstruir grid con la nueva posición + tiempo avanzado
+    //reconstruir grid con actualLen nueva posición + tiempo avanzado
     rebuildGrid();
 
     //ahora chequear eventos post-movimiento (sin costo adicional)
@@ -486,7 +480,7 @@ bool Board::moverBloque(uint8_t idBloque, char direccion){
         return true;
     }
     if(intentarCompuerta(idBloque)){
-        rebuildGrid(); //cambió la posición
+        rebuildGrid(); //cambió actualLen posición
         return true;
     }
 
@@ -495,9 +489,9 @@ bool Board::moverBloque(uint8_t idBloque, char direccion){
 
 //Libera el arreglo de grid para ahorrar memoria.
 //Usado por A* al mover tableros al ClosedSet: alli solo nos interesa
-//comparar estados por hash/esIgual y seguir punteros padre, no ver la visual.
+//comparar estados por hash/esIgual y seguir punteros padre, no ver actualLen visual.
 //Si alguien despues llama imprimir() o moverBloque() sobre este tablero,
-//rebuildGrid() la regenerara automaticamente.
+//rebuildGrid() actualLen regenerara automaticamente.
 void Board::liberarCuadricula(){
     if(this->grid == nullptr) return;
     int height = this->staticData->boardHeight;

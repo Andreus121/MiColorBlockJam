@@ -19,11 +19,11 @@ class Board{
     StaticData* staticData;
 
     //datos dinamicos
-    int blocksCount; //bloques en juego
+    int8_t blocksCount; //bloques en juego
     Block** blocks;  //arreglo de punteros a bloques en juego
     Exit** exits;  //arreglo de punteros a salidas en juego
     Gate** gates; //arreglo de punteros a compuertas en juego
-    int movesCount; //contador de movimientos realizados en el turno actual (inicia en 0)
+    uint8_t movesCount; //contador de movimientos realizados en el turno actual (inicia en 0)
 
     char** grid;
     
@@ -31,7 +31,9 @@ class Board{
     Board(StaticData* staticData,
         Block** bloques,
         Exit** salidas,
-        Gate** compuertas);
+        Gate** compuertas,
+        uint8_t movesCount=0,
+        int8_t blocksCount=0);
 
     //destructor: libera los bloques, salidas, compuertas y la cuadrícula
     ~Board();
@@ -46,13 +48,13 @@ class Board{
     //clone all data of the Table except the grid
     Board* clone();    
 
-    int findBlock(uint8_t idBloque);
+    int8_t findBlock(int8_t idBloque);
 
-    bool canMove(uint8_t idBloque, char direccion);
+    bool canMove(int8_t idBloque, char direccion);
 
-    bool moveBlock(uint8_t idBloque, char direccion);
+    bool moveBlock(int8_t idBloque, char direccion);
 
-    bool tryExit(uint8_t idBloque);
+    bool tryExit(int8_t idBloque);
 
-    bool tryGate(uint8_t idBloque);
+    bool tryGate(int8_t idBloque);
 };
