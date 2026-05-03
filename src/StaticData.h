@@ -5,7 +5,7 @@
 class StaticData{
     public:
     //board's data
-    uint8_t boardWith; //ancho
+    uint8_t boardWidth; //ancho
     uint8_t boardHeight; //largo
     char** boardWalls;
     uint16_t stepLimit;

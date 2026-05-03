@@ -2,7 +2,7 @@
 
 StaticData::StaticData(){
     //board's data
-    this->boardWith = 0;
+    this->boardWidth = 0;
     this->boardHeight = 0;
     this->boardWalls = nullptr;
     this->stepLimit = 0;
