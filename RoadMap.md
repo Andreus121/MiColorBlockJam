@@ -5,8 +5,9 @@
 - [x] Refactor **StaticData** class: Translate to English and rename variables
 - [x] Refactor **Salida** class: Translate to English and rename variables
 - [x] Refactor **Compuerta** class: Translate to English and rename variables
-- [ ] Refactor **Tablero** class: Translate to English and rename variables
-- [ ] Refactor **Parser** class: Translate to English and rename variables
+- [x] Refactor **Tablero** class: Translate to English and rename variables
+- [ ] Define structure of map.txt
+- [ ] Remake **Parser** class: Translate to English and organize
 
 ## Future Upgrades
 - [ ] undo/redo system with double stack
