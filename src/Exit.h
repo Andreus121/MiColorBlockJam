@@ -17,5 +17,5 @@ class Exit{
         int8_t actualLen,
         StaticData* staticData);
 
-    void updateData();
+    void updateExit();
 };

@@ -57,4 +57,7 @@ class Board{
     bool tryExit(int8_t idBloque);
 
     bool tryGate(int8_t idBloque);
+
+    void freeGrid();
+    
 };

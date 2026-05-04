@@ -14,7 +14,7 @@ Exit::Exit(int8_t id,
 //update the len, direction and steps of the exit.
 //the change of colors in the exit its a "come and back"
 //initialLen, finalLen, limitSteps
-void Exit::updateData(){
+void Exit::updateExit(){
 
     int8_t initialLen = staticData->exitInitialLenghts[id];
     int8_t finalLen = staticData->exitFinalLenghts[id];
