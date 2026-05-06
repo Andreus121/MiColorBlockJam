@@ -1,20 +1,26 @@
 [META]
-NAME = LSHAPE
-WIDTH = 8
+NAME = lvl3
+WIDTH = 12
 HEIGHT = 8
-STEP_LIMIT = 50
+STEP_LIMIT = 100
+
 [BLOCK]
-1 COLOR=a WIDTH=2 HEIGHT=3 INIT_X=3 INIT_Y=3 GEOMETRY=1 0 1 0 1 1
+1 COLOR=a WIDTH=2 HEIGHT=2 INIT_X=1 INIT_Y=3 GEOMETRY=1 1 1 1
+2 COLOR=b WIDTH=2 HEIGHT=2 INIT_X=1 INIT_Y=5 GEOMETRY=1 1 1 1
+
 [WALL]
-########
-#      #
-#      #
-#      #
-#      #
-#      #
-#      #
-########
+############
+#     #    #
+#     #    #
+#          #
+#          #
+#     #    #
+#     #    #
+############
+
 [EXIT]
-COLOR=a X=7 Y=4 ORIENTATION=V LI=3 LF=3 STEP=0
+COLOR=a X=11 Y=1 ORIENTATION=V LI=2 LF=2 STEP=0
+COLOR=b X=11 Y=5 ORIENTATION=V LI=2 LF=2 STEP=0
+
 [GATE]
- 
+X=6 Y=3 ORIENTATION=V LI=2 CI=a CF=b STEP=3

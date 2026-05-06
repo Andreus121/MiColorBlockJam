@@ -1,19 +1,21 @@
 [META]
-NAME = SIMPLE1
-WIDTH = 8
+NAME = lvl1
+WIDTH = 10
 HEIGHT = 8
-STEP_LIMIT = 50
+STEP_LIMIT = 100
 [BLOCK]
-1 COLOR=a WIDTH=2 HEIGHT=2 INIT_X=4 INIT_Y=4 GEOMETRY=1 1 1 1
+1 COLOR=a WIDTH=2 HEIGHT=2 INIT_X=2 INIT_Y=3 GEOMETRY=1 1 1 1
+2 COLOR=b WIDTH=2 HEIGHT=2 INIT_X=5 INIT_Y=3 GEOMETRY=1 1 1 1
 [WALL]
-########
-#      #
-#      #
-#      #
-#      #
-#      #
-#      #
-########
+##########
+#        #
+#        #
+#        #
+#        #
+#        #
+#        #
+##########
 [EXIT]
-COLOR=a X=7 Y=4 ORIENTATION=V LI=2 LF=2 STEP=0
+COLOR=a X=0 Y=3 ORIENTATION=V LI=2 LF=2 STEP=0
+COLOR=b X=9 Y=3 ORIENTATION=V LI=2 LF=2 STEP=0
 [GATE]
