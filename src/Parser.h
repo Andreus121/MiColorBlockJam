@@ -1,46 +1,36 @@
 #pragma once
 #include "StaticData.h"
-#include "Bloque.h"
-#include "Salida.h"
-#include "Compuerta.h"
+#include "Block.h"
+#include "Exit.h"
+#include "Gate.h"
  
 /*
-Parser lee un archivo de configuración de Color Block Jam y construye
-los datos estáticos (StaticData) y los datos dinámicos iniciales
-(arreglos de Bloque*, Salida*, Compuerta*) listos para entregar
-al constructor de Tablero.
+Read a file.txt and create the StaticData, Blocks, Exits and Gates
 
-Formato esperado (ver enunciado):
+Format:
 [META]
 NAME, WIDTH, HEIGHT, STEP_LIMIT
-
 [BLOCK]
-ID COLOR=c WIDTH=w HEIGHT=h INIT_X=x INIT_Y=y GEOMETRY=...
-
+COLOR=c WIDTH=w HEIGHT=h INIT_X=x INIT_Y=y GEOMETRY=...
 [WALL]
 matriz de '#' y ' ' del tamaño WIDTH x HEIGHT
-
 [EXIT]
 OLOR=c X=x Y=y ORIENTATION=H|V LI=li LF=lf STEP=p
-
 [GATE]
-COLOR=c X=x Y=y ORIENTATION=H|V LI=li CI=ci CF=cf STEP=p
-
-Convención: X es columna, Y es fila. Internamente cuadricula[fila][col].
+X=x Y=y ORIENTATION=H|V LI=li CI=ci CF=cf STEP=p
 */
-class Parser {
+class Parser{
     public:
-    //datos parseados (rellenados por cargar())
+    //data
     StaticData* staticData;
-    Bloque** bloques;
-    Salida** salidas;
-    Compuerta** compuertas;
+    Block** blocks;
+    Exit** exits;
+    Gate** gates;
  
     Parser();
     ~Parser();
  
-    //lee el archivo en 'ruta'. Retorna true si se cargó bien, false en error.
-    //Tras cargar, los atributos staticData/bloques/salidas/compuertas
-    //quedan poblados y listos para usarse.
-    bool cargar(const char* ruta);
+    //read the file "path". Return 0 if its ok, else 1.
+    //holds the data readed in the a Parser
+    int8_t save(const char* path);
 };

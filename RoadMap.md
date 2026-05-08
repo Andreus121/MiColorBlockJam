@@ -6,7 +6,7 @@
 - [x] Refactor **Salida** class: Translate to English and rename variables
 - [x] Refactor **Compuerta** class: Translate to English and rename variables
 - [x] Refactor **Tablero** class: Translate to English and rename variables
-- [ ] Define structure of map.txt
+- [x] Define structure of map.txt
 - [ ] Remake **Parser** class: Translate to English and organize
 
 ## Future Upgrades
