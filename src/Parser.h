@@ -33,4 +33,10 @@ class Parser{
     //read the file "path". Return 0 if its ok, else 1.
     //holds the data readed in the a Parser
     int8_t save(const char* path);
+
+    //auxiliar functions
+    private:
+    static void skipSpaces(const char*& p);
+
+    static int readInt(const char*& p);
 };
