@@ -131,26 +131,137 @@ int8_t Parser::save(const char* path){
     //reserve memory for exits
     staticData->exitX = new int8_t[staticData->exitCount];
     staticData->exitY = new int8_t[staticData->exitCount];
-    staticData->exitColors = new char[staticData->blockCount];
-    staticData->exitOrientations = new char[staticData->blockCount];
+    staticData->exitColors = new char[staticData->exitCount];
+    staticData->exitOrientations = new char[staticData->exitCount];
     staticData->exitInitialLenghts = new int8_t[staticData->exitCount];
     staticData->exitFinalLenghts = new int8_t[staticData->exitCount];
     staticData->exitSteps = new int8_t[staticData->exitCount];
     
+    //this part was made for Claude sonnet 4.6
+
     //reserve memory for gates
     staticData->gateX = new int8_t[staticData->gateCount];
     staticData->gateY = new int8_t[staticData->gateCount];
+    staticData->gateOrientations = new char[staticData->gateCount];
+    staticData->gateLengths = new int8_t[staticData->gateCount];
     staticData->gateColorSequenceLengths = new int8_t[staticData->gateCount];
     staticData->gateColorSequences = new char*[staticData->gateCount];
     staticData->gateSteps = new int8_t[staticData->gateCount];
-
-    //reset section and file
+    for (int i = 0; i < staticData->gateCount; i++){
+        staticData->gateColorSequences[i] = nullptr;
+    }
+    
+    int8_t* initX = new int8_t[staticData->blockCount];
+    int8_t* initY = new int8_t[staticData->blockCount];
+ 
+    // --- PASS 2: read blocks, exits, gates ---
     file.clear();
     file.seekg(0);
     section = 0;
-    //save blocks, exits and gates
-    while (file.getline(buffer,MAX_LINE)){
-
-
+    int blockIdx = 0, exitIdx = 0, gateIdx = 0;
+ 
+    while (file.getline(buffer, MAX_LINE)) {
+ 
+        if (buffer[0] == '[') {
+            if      (std::strcmp(buffer, "[META]")  == 0) section = 0;
+            else if (std::strcmp(buffer, "[BLOCK]") == 0) section = 1;
+            else if (std::strcmp(buffer, "[WALL]")  == 0) section = 2;
+            else if (std::strcmp(buffer, "[EXIT]")  == 0) section = 3;
+            else if (std::strcmp(buffer, "[GATE]")  == 0) section = 4;
+            continue;
+        }
+ 
+        // skip empty lines and wall section entirely
+        if (section == 2) continue;
+        if (buffer[0] == '\0') continue;
+ 
+        const char* p = buffer;
+ 
+        if (section == 1) {
+            skipWord(p); // skip "COLOR"
+            staticData->blockColors[blockIdx] = readChar(p);
+            skipWord(p); // skip "WIDTH"
+            staticData->blockWidth[blockIdx]  = (int8_t)readInt(p);
+            skipWord(p); // skip "HEIGHT"
+            staticData->blockHeight[blockIdx] = (int8_t)readInt(p);
+            int8_t w = staticData->blockWidth[blockIdx];
+            int8_t h = staticData->blockHeight[blockIdx];
+            skipWord(p); // skip "INIT_X"
+            initX[blockIdx] = (int8_t)readInt(p);
+            skipWord(p); // skip "INIT_Y"
+            initY[blockIdx] = (int8_t)readInt(p);
+            skipWord(p); // skip "GEOMETRY"
+            staticData->blockGeometrics[blockIdx] = new uint8_t[w * h];
+            for (int k = 0; k < w * h; k++) {
+                staticData->blockGeometrics[blockIdx][k] = (uint8_t)readInt(p);
+            }
+            blockIdx++;
+        }
+        else if (section == 3) {
+            skipWord(p); // skip "COLOR"
+            staticData->exitColors[exitIdx]         = readChar(p);
+            skipWord(p); // skip "X"
+            staticData->exitX[exitIdx]              = (int8_t)readInt(p);
+            skipWord(p); // skip "Y"
+            staticData->exitY[exitIdx]              = (int8_t)readInt(p);
+            skipWord(p); // skip "ORIENTATION"
+            staticData->exitOrientations[exitIdx]   = readChar(p);
+            skipWord(p); // skip "LI"
+            staticData->exitInitialLenghts[exitIdx] = (int8_t)readInt(p);
+            skipWord(p); // skip "LF"
+            staticData->exitFinalLenghts[exitIdx]   = (int8_t)readInt(p);
+            skipWord(p); // skip "STEP"
+            staticData->exitSteps[exitIdx]          = (int8_t)readInt(p);
+            exitIdx++;
+        }
+        else if (section == 4) {
+            // format: X 13 Y 7 ORIENTATION V LI 4 COLORS a b c d _ STEP 1
+            skipWord(p); // skip "X"
+            staticData->gateX[gateIdx]            = (int8_t)readInt(p);
+            skipWord(p); // skip "Y"
+            staticData->gateY[gateIdx]            = (int8_t)readInt(p);
+            skipWord(p); // skip "ORIENTATION"
+            staticData->gateOrientations[gateIdx] = readChar(p);
+            skipWord(p); // skip "LI"
+            staticData->gateLengths[gateIdx]      = (int8_t)readInt(p);
+            skipWord(p); // skip "COLORS"
+ 
+            // read colors until '_' terminator
+            int8_t seqLen = 0;
+            char tempColors[32];
+            char c;
+            while ((c = readChar(p)) != '_' && c != '\0' && seqLen < 32) {
+                tempColors[seqLen++] = c;
+            }
+            staticData->gateColorSequences[gateIdx] = new char[seqLen];
+            for (int k = 0; k < seqLen; k++) {
+                staticData->gateColorSequences[gateIdx][k] = tempColors[k];
+            }
+            staticData->gateColorSequenceLengths[gateIdx] = seqLen;
+ 
+            skipWord(p); // skip "STEP"
+            staticData->gateSteps[gateIdx] = (int8_t)readInt(p);
+            gateIdx++;
+        }
     }
+ 
+    // --- create dynamic objects ---
+    blocks = new Block*[staticData->blockCount];
+    exits  = new Exit*[staticData->exitCount];
+    gates  = new Gate*[staticData->gateCount];
+ 
+    for (int i = 0; i < staticData->blockCount; i++) {
+        blocks[i] = new Block((int8_t)i, initX[i], initY[i], staticData);
+    }
+    for (int i = 0; i < staticData->exitCount; i++) {
+        exits[i] = new Exit(i, staticData->exitInitialLenghts[i], staticData);
+    }
+    for (int i = 0; i < staticData->gateCount; i++) {
+        gates[i] = new Gate(i, staticData->gateColorSequences[i][0], staticData);
+    }
+ 
+    delete[] initX;
+    delete[] initY;
+ 
+    return 0;
 }

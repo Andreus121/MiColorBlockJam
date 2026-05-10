@@ -7,8 +7,13 @@
 - [x] Refactor **Compuerta** class: Translate to English and rename variables
 - [x] Refactor **Tablero** class: Translate to English and rename variables
 - [x] Define structure of map.txt
-- [ ] Remake **Parser** class: Translate to English and organize
-
+- [X] Remake **Parser** class: Translate to English and organize
+- [ ] Make test for Blocks
+- [ ] Make test for Exits
+- [ ] Make test for Gates
+- [ ] Make test for StaticData
+- [ ] Make test for Board
+- [ ] Make test for Parser
 ## Future Upgrades
 - [ ] undo/redo system with double stack
 - [ ] blocks with restricted movement (Horizontal, Vertical or both)

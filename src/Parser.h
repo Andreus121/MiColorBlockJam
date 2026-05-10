@@ -39,4 +39,8 @@ class Parser{
     static void skipSpaces(const char*& p);
 
     static int readInt(const char*& p);
+
+    static char readChar(const char*& p);
+
+    static void skipWord(const char*& p);
 };
