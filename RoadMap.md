@@ -9,9 +9,9 @@
 - [x] Define structure of map.txt
 - [X] Remake **Parser** class: Translate to English and organize
 - [ ] Make test for Blocks
+- [ ] Make test for StaticData
 - [ ] Make test for Exits
 - [ ] Make test for Gates
-- [ ] Make test for StaticData
 - [ ] Make test for Board
 - [ ] Make test for Parser
 ## Future Upgrades
