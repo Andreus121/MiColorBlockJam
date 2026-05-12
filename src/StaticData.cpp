@@ -28,6 +28,8 @@ StaticData::StaticData(){
     this->gateCount = 0;
     this->gateX = nullptr;
     this->gateY = nullptr;
+    this->gateOrientations = nullptr;
+    this->gateLengths = nullptr;
     this->gateColorSequenceLengths = nullptr;
     this->gateColorSequences = nullptr;
     this->gateSteps = nullptr;

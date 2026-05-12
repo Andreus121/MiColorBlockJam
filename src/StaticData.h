@@ -6,7 +6,7 @@ class StaticData{
     public:
     //board's data
     int8_t boardWidth; //ancho
-    int8_t boardHeight; //largo
+    int8_t boardHeight; //alto
     char** boardWalls;
     uint16_t stepLimit;
 
@@ -29,6 +29,8 @@ class StaticData{
 
     //gate's data
     int8_t gateCount;
+    char* gateOrientations;
+    int8_t* gateLengths;
     int8_t* gateX;
     int8_t* gateY;
     int8_t* gateColorSequenceLengths;
